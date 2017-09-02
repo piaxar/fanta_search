@@ -10,7 +10,7 @@ stemmer = EnglishStemmer()
 
 def tokenize(word_list):
     for i in range(len(word_list)):
-        word_list[i] = re.sub('[\.,\)\(]', '', word_list[i])
+        word_list[i] = re.sub('[^0-9a-zA-Z]+', '', word_list[i])
 
 def stopwords_rem(word_list):
     return [word for word in word_list if word not in stopwords.words('english')]
@@ -38,13 +38,16 @@ def main():
     i = 0
     start_time = time.time()
     for document in docs:
-        i += 1
-        if i%500 == 0:
-            print("--- %s seconds passed ---" % (time.time() - start_time))
-            file_name = './index_{}.json'.format(i)
-            output_f = open(file_name, 'w')
-            output_f.write(json.dumps(index))
-            output_f.close
+        # dump every 500 iterations
+        # uncoment if needed
+        # i += 1
+        # if i%500 == 0:
+        #     print("--- %s seconds passed ---" % (time.time() - start_time))
+        #     file_name = './index_{}.json'.format(i)
+        #     output_f = open(file_name, 'w')
+        #     output_f.write(json.dumps(index))
+        #     output_f.close
+
 
         # get data and lowercase
         docID = document.get('docID')
