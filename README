@@ -1,0 +1,6 @@
+0) setup virtualenv and move unzip project into virtualenv directory
+1) cd into "source" folder and run parse_json.py
+
+ pip install -U nltk
+
+ 

@@ -4,6 +4,7 @@ import json
 
 db_path = './dataset'
 asterixes = re.compile('^[*]+$')
+spaces = re.compile(r"\s*\n")
 file_name = re.compile('LISA[0-9][.]+')
 
 docs = []
@@ -14,6 +15,7 @@ for file in os.listdir(db_path):
 
     #check if file is relevant
     if file_name.match(file):
+        print (file)
         m_file = list(f)
 
         new_doc = {}
@@ -32,7 +34,7 @@ for file in os.listdir(db_path):
                 docID = int((m_line.split())[1])
                 continue
 
-            if is_num and m_line == '\n':
+            if is_num and spaces.match(m_line):
                 is_num = False
                 is_cont_next = True
                 continue
@@ -43,6 +45,7 @@ for file in os.listdir(db_path):
 
             if asterixes.match(m_line):
                 is_cont_next = False
+                print(docID)
                 new_doc.update({'docID':docID})
                 new_doc.update({'docName':docName})
                 new_doc.update({'docCont':docCont})
