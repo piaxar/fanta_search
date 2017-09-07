@@ -1,6 +1,16 @@
 0) setup virtualenv and move unzip project into virtualenv directory
 1) cd into "source" folder and run parse_json.py
 
- pip install -U nltk
 
- 
+pip install -U pyobjc
+install PyGUI (download + python setup.py install)
+
+
+
+pip install -U nltk
+
+pip install pyforms
+
+git clone https://github.com/UmSenhorQualquer/pysettings.git
+cd pysettings
+python setup.py install
