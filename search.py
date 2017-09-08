@@ -17,10 +17,10 @@ def main():
     parser = exp.ExpresisonParser()
     stemmer = EnglishStemmer()
 
-    with open('index.json') as data_file:
+    with open('./processed_data/index.json') as data_file:
         index = json.load(data_file)
 
-    with open('dataset.json') as df:
+    with open('./processed_data/dataset.json') as df:
         docs = json.load(df)
 
     for doc in docs:
@@ -37,6 +37,8 @@ def main():
             break
         elif command == 'h':
             print ("HELP")
+            print ("\tFind all information on project's github page:")
+            print ("\thttps://github.com/piaxar/fanta_search")
             input("\nPress 'enter' to continue")
         elif command == 's':
             print ("SEARCH")

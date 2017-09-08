@@ -60,6 +60,6 @@ for file in os.listdir(db_path):
                 continue
     f.close()
 
-output_f = open('./dataset.json', 'w')
+output_f = open('./processed_data/dataset.json', 'w')
 output_f.write(json.dumps(docs))
 output_f.close

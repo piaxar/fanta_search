@@ -32,7 +32,7 @@ def main():
     index = {}
 
     # open dataset
-    with open('dataset.json') as data_file:
+    with open('processed_data/dataset.json') as data_file:
         docs = json.load(data_file)
 
     i = 0
@@ -76,7 +76,7 @@ def main():
         print ('Doc '+str(docID) + ' has been indexed.')
 
 
-    file_name = './index.json'
+    file_name = './processed_data/index.json'
     output_f = open(file_name, 'w')
     output_f.write(json.dumps(index))
     output_f.close

@@ -98,10 +98,14 @@ class Term(Expression):
         self.term = term
 
 def main():
+    print ("This is logical expression parser. It builds AST for queries, like in example below.")
     query = "termz & termb & ~termc"
+    print (query)
+    print ("Operators: '&' - logial AND, '|' - logical OR, '~' - logical NOT.")
+    print ("You can compose queries, using brackets. Ex: (^term1 | term2) & (term3 | term4)")
+    # usage:
     parser = ExpresisonParser()
     result = parser.parse(query)
-    print ("enddd")
 
 if __name__ == '__main__':
     main()
