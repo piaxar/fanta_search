@@ -36,7 +36,7 @@ class ExpresisonParser():
         result = None
         self.skipSpaces() #????
         n_char = self.charPoint()
-        if n_char[0].isalpha():
+        if n_char[0].isalnum():
             result = self.parseTerm()
         elif n_char == '(':
             self.moveIterator() #skip '('
@@ -52,7 +52,7 @@ class ExpresisonParser():
 
     def parseTerm(self):
         term = ''
-        while (self.charPoint().isalpha()):
+        while (self.charPoint().isalnum()):
             term+=self.charPoint()
             self.moveIterator()
         result = Term(term)
@@ -98,7 +98,7 @@ class Term(Expression):
         self.term = term
 
 def main():
-    query = "~(terms & termz) | ~terma & termb & termc"
+    query = "termz & termb & ~termc"
     parser = ExpresisonParser()
     result = parser.parse(query)
     print ("enddd")

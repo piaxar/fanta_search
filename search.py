@@ -1,66 +1,112 @@
 import json
 import indexer as ind
 import operator
+import expression_parser as exp
+from nltk.stem.snowball import EnglishStemmer
+
+stemmer = None
+parser = None
+index = None
+all_docIDs = []
 
 def main():
+    global stemmer, parser, index, all_docIDs
+
     index = {}
+
+    parser = exp.ExpresisonParser()
+    stemmer = EnglishStemmer()
 
     with open('index.json') as data_file:
         index = json.load(data_file)
 
+    with open('dataset.json') as df:
+        docs = json.load(df)
+
+    for doc in docs:
+        all_docIDs.append(doc.get("docID"))
+
+    # main loop
     while True:
-        query = input("Search query: ")
-        if query == 'exit()':
+        command = input("Enter\t's' to search\
+                            \n\t'd' to find document by id\
+                            \n\t'h' for help\
+                            \n\t'e' to exit\
+                            \nCommand: ")
+        if command == 'e':
             break
-        else:
-            print (search(index, query))
+        elif command == 'h':
+            print ("HELP")
+            input("\nPress 'enter' to continue")
+        elif command == 's':
+            print ("SEARCH")
+            print ("\tType your query, for example 'term1 & term2 & ~term3'")
+            print ("\tFor help, pleas refer to HELP opiton in main menu\n")
+            query = input("Query:\t")
+            print ("\n\tFOUND:")
+            print ("\t"+ str(search(index, query)))
+            input("\nPress 'enter' to continue")
+        elif command == 'd':
+            print ("DOCUMENT")
+            print ("\tType document id (from search results)\n")
+            query = int(input("DocID: "))
+            if query in range(1, len(docs)+1):
+                doc = docs[query - 1]
+                if doc.get("docID") == query:
+                    print ("\n\tFOUND:")
+                    print ("\tDocID: " + str(doc.get("docID")) + \
+                            "\n\n\tName: " + str(doc.get("docName")) + \
+                            "\n\n\tContent: "+ str(doc.get("docCont")))
+            else:
+                print ("\n\tDocument with such id doesn't exist")
+            input("\nPress 'enter' to continue")
+
+
+
     #print (list(index.items())[0])
 
 def search(index, query):
     # normalizing query
     query = query.lower()
-    m_query = query.split()
-    ind.tokenize(m_query)
-    filtered_query = ind.stopwords_rem(m_query)
-    ind.stem(filtered_query)
+    parser = exp.ExpresisonParser()
+    ast = parser.parse(query)
+    return getChild(ast)
 
-    filtered_query = sorted(set(filtered_query))
-    print (filtered_query)
-
-    # collect all occurances of terms
-    all_docIDs = []
-    for term in filtered_query:
-        if index.get(term):
-            all_docIDs.extend(index[term])
-
-    # found any occurances
-    if len(all_docIDs) > 0:
-        # table for relevant-sorted search results
-        relevance_table = {}
-        # table with key as docID and value as number of occurances
-        for docID in all_docIDs:
-            if not relevance_table.get(docID):
-                relevance_table[docID] = 1
-            else:
-                relevance_table[docID] += 1
-
-        # sort relevance table by number of occurances
-        sorted_ids = []
-        sorted_d = sorted(relevance_table.items(), key=operator.itemgetter(1),reverse=True)
-        print (sorted_d)
-        for i in sorted_d:
-            sorted_ids.append(i[0])
-
-        # print results
-        # need to replace with return list of indexes
-        #print ("Found " + str(len(sorted_ids))+" documents.")
-        #print ("Document ids, sorted by relevance:")
-        return ("sorted_ids")
-
-    # no occurances found
+def getChild(node):
+    if type(node) is exp.Term:
+        return getDocs(node.term)
     else:
-        return ([-1])
+        left_set = getChild(node.left)
+        result = []
+        if node.operator == '~':
+            # extract given indices from set
+            for i in all_docIDs:
+                if i not in left_set:
+                    result.append(i)
+            return result
+        else:
+            right_set = getChild(node.right)
+            if node.operator == '&':
+                for i in right_set:
+                    if i in left_set:
+                        result.append(i)
+                return result
+            elif node.operator == '|':
+                result.extend(left_set)
+                for i in right_set:
+                    if i not in left_set:
+                        result.append(i)
+                return result
 
+def getDocs(term):
+    search_term = stemmer.stem(term)
+    allDocs = index.get(search_term)
+    reduced_list = []
+    if type(allDocs) is list:
+        for i in allDocs:
+            if i not in reduced_list:
+                reduced_list.append(i)
+    return reduced_list
 
 if __name__ == '__main__':
     main()
