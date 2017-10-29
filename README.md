@@ -27,7 +27,7 @@ As you can see, search returns you top 20 most relevant articles along with thei
 
 ### Evaluating
 To perform evaluating, I choose searching phrase to be "Information service".
-Next, I selected first 100 articles, then perform indexing. After labeling I marked them as relevant and not relevant:
+Next, I selected 100 articles, then perform indexing. After labeling I marked them as relevant and not relevant. Process of indexing and labeling on screenshots:
 ![search](https://github.com/piaxar/fanta_search/blob/ranked_retrieval/pics/indexing100.png "indexing")
 ![search](https://github.com/piaxar/fanta_search/blob/ranked_retrieval/pics/labeling100.png "labeling")
 
@@ -61,13 +61,13 @@ Main changes happened in searching algorithm.
 Now searching method after filtering of query takes 6 steps:
 
 Step 1
-```
+```python
     # sorting and counting tf for query
     query_vec = [all_terms.count(i) for i in terms]
     query_vec = [1.0 + math.log10(x) for x in query_vec]
 ```
 Step 2
-```
+```python
     # creating vectors of documents with logarithmic tf
     doc_vecs = {}
     doc_freq = [0] * (len(terms))
@@ -83,13 +83,13 @@ Step 2
         doc_vecs[doc_id][i] = tf_score
 ```
 Step 3
-```
+```python
     # appplying idf for query vector:
     for i in range(len(query_vec)):
         query_vec[i] = query_vec[i] * math.log10(N/doc_freq[i])
 ```
 Step 4
-```
+```python
     #normalization for query vector:
     v = [x**2 for x in query_vec]
     norm_factor = math.sqrt(sum(v))
@@ -97,7 +97,7 @@ Step 4
     query_vec = v 
 ```
 Step 5
-```
+```python
     # normalizing document vectors
     for key, tfs in doc_vecs.items():
         v = [x**2 for x in tfs]
@@ -106,7 +106,7 @@ Step 5
         doc_vecs[key] = v
 ```
 Step 6
-```
+```python
     # counting scores
     scores = {}
     for doc_id, vec in doc_vecs.items():
