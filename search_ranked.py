@@ -77,6 +77,8 @@ def search(query, top_n = 20):
     query = query.lower()
     terms = query.split()
     
+    N = 6004 #len(doc_ids)
+    
     #removing stopwords
     terms = ind.stopwords_rem(terms)
     
@@ -87,20 +89,14 @@ def search(query, top_n = 20):
     
     terms = list(set(all_terms))
     
-    
-    
+    # sorting and counting tf for query
     query_vec = [all_terms.count(i) for i in terms]
-
     query_vec = [1.0 + math.log10(x) for x in query_vec]
+    
     # creating vectors of documents with logarithmic tf
     doc_vecs = {}
     doc_freq = [0] * (len(terms))
-    
-    
     doc_ids = getDocKeys(terms)
-    
-    N = 6004 #len(doc_ids)
-    
     for doc_id in doc_ids:
         doc_vecs[doc_id] = [0] * (len(terms))
         
